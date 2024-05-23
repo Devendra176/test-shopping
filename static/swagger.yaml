@@ -1,0 +1,172 @@
+openapi: 3.0.0
+info:
+  title: Shopping API
+  version: '1.0'
+paths:
+  /products:
+    get:
+      summary: List all products
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductResponse'
+  /purchase:
+    post:
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /check:
+    get:
+      summary: Check order details
+      parameters:
+        - name: buyer
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: order_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckResponse'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /luckydraw/{order_id}:
+      get:
+        summary: Perform a lucky draw on an order
+        parameters:
+          - in: path
+            name: order_id
+            schema:
+              type: string
+            required: true
+        responses:
+          '200':
+            description: Lucky draw result
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/LuckyDrawResponse'
+          '500':
+            description: Error occurred
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ProductResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        cost:
+          type: integer
+      required:
+        - name
+        - cost
+      additionalProperties: false
+    OrderRequest:
+      type: object
+      properties:
+        item:
+          type: string
+        quantity:
+          type: integer
+        buyer:
+          type: string
+      required:
+        - item
+        - quantity
+        - buyer
+    OrderResponse:
+      type: object
+      properties:
+        order_id:
+          type: string
+        total:
+          type: integer
+      required:
+        - order_id
+        - total
+    Item:
+      type: object
+      properties:
+        item:
+          type: string
+        quantity:
+          type: integer
+      required:
+        - item
+        - quantity
+    CheckResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        total:
+          type: integer
+      required:
+        - items
+        - total
+    LuckyDrawResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string

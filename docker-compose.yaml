@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  web:
+    build: .
+    container_name: shopping_container
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/shopping
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: >
+        sh -c "flask db upgrade && python3.8 app.py"
+
+  db:
+    image: nouchka/sqlite3
+    container_name: shopping_db_container
+    volumes:
+      - ./instance
+    env_file:
+      - .env

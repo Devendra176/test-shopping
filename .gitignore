@@ -1,0 +1,8 @@
+*.py[cod]
+
+!.gitattributes
+!.gitignore
+*.pyc
+__pycache__/
+*\.egg*
+instance/
